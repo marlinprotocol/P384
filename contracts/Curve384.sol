@@ -140,7 +140,7 @@ library Curve384 {
     
     function verify(
         C384Elm memory pub,
-        uint256 m,
+        uint256 mhi, uint256 mlo,
         uint256 rhi, uint256 rlo,
         uint256 shi, uint256 slo)
         internal view
@@ -157,7 +157,7 @@ library Curve384 {
             ylo: gylo
         });
         (shi, slo) = FieldO384.oinv(shi, slo);
-        (uhi, ulo) = FieldO384.omul(0, m, shi, slo);
+        (uhi, ulo) = FieldO384.omul(mhi, mlo, shi, slo);
         (vhi, vlo) = FieldO384.omul(rhi, rlo, shi, slo);
         cmul(g, uhi, ulo);
         cmul(pub, vhi, vlo);
@@ -175,7 +175,7 @@ library Curve384 {
     }
     
     function test_fadd()
-        public view
+        public pure
     {
         uint256 xhi = 0xc84a6e6ec1e7f30f5c812eeba420f769;
         uint256 xlo = 0xb78d377301367565d6c4579d1bd222dbf64ea76464731482fd32a61ebde26432;
@@ -191,7 +191,7 @@ library Curve384 {
     }
     
     function test_fsub()
-        public view
+        public pure
     {
         uint256 xhi = 0x3e501df64c8d7065d58eac499351e2a;
         uint256 xlo = 0xfcdc74fda6bd4980919ca5dcf51075e51e36e9442aba748d8d9931e0f1332bd6;
@@ -323,7 +323,7 @@ library Curve384 {
         uint256 shi = 0xee281a7e5d0ea6a14e00c1759f79fddb;
         uint256 slo = 0xd91f3994cae97f886b1f2615c6a51839f13e1b21becd3d21accaccaceed2725f;
         
-        bool result = verify(a, m, rhi, rlo, shi, slo);
+        bool result = verify(a, 0, m, rhi, rlo, shi, slo);
         assert(result == true);
     }
 
@@ -342,7 +342,7 @@ library Curve384 {
         uint256 shi = 0xee281a7e5d0ea6a14e00c1759f79fddb;
         uint256 slo = 0xd91f3994cae97f886b1f2615c6a51839f13e1b21becd3d21accaccaceed2725f;
         
-        bool result = verify(a, m, shi, slo, rhi, rlo);
+        bool result = verify(a, 0, m, shi, slo, rhi, rlo);
         assert(result == false);
     }
 }
