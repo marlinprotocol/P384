@@ -2,7 +2,7 @@ pragma solidity ^0.8.24;
 
 import "./Curve384.sol";
 
-contract Wallet is Curve384 {
+contract Wallet {
     uint256 Pxhi;
     uint256 Pxlo;
     uint256 Pyhi;
@@ -17,12 +17,12 @@ contract Wallet is Curve384 {
     }
     
     function verifySignature(bytes32 hash, uint256 rhi, uint256 rlo, uint256 shi, uint256 slo) public view returns (bool) {
-        C384Elm memory pub = C384Elm({
+        Curve384.C384Elm memory pub = Curve384.C384Elm({
             xhi: Pxhi,
             xlo: Pxlo,
             yhi: Pyhi,
             ylo: Pylo
         });
-        return verify(pub, uint256(hash), rhi, rlo, shi, slo);
+        return Curve384.verify(pub, uint256(hash), rhi, rlo, shi, slo);
     }
 }

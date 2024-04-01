@@ -3,7 +3,7 @@ pragma solidity 0.8.24;
 import "./LibMath.sol";
 
 // Field modulo the NIST-P384 / secp384r1 prime
-contract FieldP384 {
+library FieldP384 {
         
     // Field order prime number p
     uint256 constant phi = 0xffffffffffffffffffffffffffffffff;

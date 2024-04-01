@@ -6,7 +6,7 @@ import "./FieldP384.sol";
 import "./FieldO384.sol";
 
 // NIST-P384 / secp384r1 curve
-contract Curve384 is FieldP384, FieldO384 {
+library Curve384 {
     struct C384Elm {
         uint256 xhi;
         uint256 xlo;
@@ -48,22 +48,22 @@ contract Curve384 is FieldP384, FieldO384 {
         uint256 tlo;
         
         // l = (ay - by) / (ax - bx)
-        (lhi, llo) = fsub(a.yhi, a.ylo, b.yhi, b.ylo);
-        (thi, tlo) = fsub(a.xhi, a.xlo, b.xhi, b.xlo);
-        (thi, tlo) = finv(thi, tlo);
-        (lhi, llo) = fmul(lhi, llo, thi, tlo);
+        (lhi, llo) = FieldP384.fsub(a.yhi, a.ylo, b.yhi, b.ylo);
+        (thi, tlo) = FieldP384.fsub(a.xhi, a.xlo, b.xhi, b.xlo);
+        (thi, tlo) = FieldP384.finv(thi, tlo);
+        (lhi, llo) = FieldP384.fmul(lhi, llo, thi, tlo);
         
         // x = l * l - ax - bx
-        (thi, tlo) = fsqr(lhi, llo);
-        (thi, tlo) = fsub(thi, tlo, a.xhi, a.xlo);
-        (thi, tlo) = fsub(thi, tlo, b.xhi, b.xlo);
+        (thi, tlo) = FieldP384.fsqr(lhi, llo);
+        (thi, tlo) = FieldP384.fsub(thi, tlo, a.xhi, a.xlo);
+        (thi, tlo) = FieldP384.fsub(thi, tlo, b.xhi, b.xlo);
         a.xhi = thi;
         a.xlo = tlo;
         
         // y = l * (bx - x) - by
-        (thi, tlo) = fsub(b.xhi, b.xlo, a.xhi, a.xlo);
-        (thi, tlo) = fmul(thi, tlo, lhi, llo);
-        (thi, tlo) = fsub(thi, tlo, b.yhi, b.ylo);
+        (thi, tlo) = FieldP384.fsub(b.xhi, b.xlo, a.xhi, a.xlo);
+        (thi, tlo) = FieldP384.fmul(thi, tlo, lhi, llo);
+        (thi, tlo) = FieldP384.fsub(thi, tlo, b.yhi, b.ylo);
         a.yhi = thi;
         a.ylo = tlo;
     }
@@ -81,25 +81,25 @@ contract Curve384 is FieldP384, FieldO384 {
         uint256 xlo;
         
         // l = (3 * ax * ax + ca) / (2 * ay)
-        (lhi, llo) = fmul(0, 3, a.xhi, a.xlo);
-        (lhi, llo) = fmul(lhi, llo, a.xhi, a.xlo);
-        (lhi, llo) = fadd(lhi, llo, cahi, calo);
+        (lhi, llo) = FieldP384.fmul(0, 3, a.xhi, a.xlo);
+        (lhi, llo) = FieldP384.fmul(lhi, llo, a.xhi, a.xlo);
+        (lhi, llo) = FieldP384.fadd(lhi, llo, cahi, calo);
         
-        (thi, tlo) = fadd(a.yhi, a.ylo, a.yhi, a.ylo);
-        (thi, tlo) = finv(thi, tlo);
-        (lhi, llo) = fmul(lhi, llo, thi, tlo);
+        (thi, tlo) = FieldP384.fadd(a.yhi, a.ylo, a.yhi, a.ylo);
+        (thi, tlo) = FieldP384.finv(thi, tlo);
+        (lhi, llo) = FieldP384.fmul(lhi, llo, thi, tlo);
         
         // x = l * l - ax - ax
-        (thi, tlo) = fsqr(lhi, llo);
-        (thi, tlo) = fsub(thi, tlo, a.xhi, a.xlo);
-        (thi, tlo) = fsub(thi, tlo, a.xhi, a.xlo);
+        (thi, tlo) = FieldP384.fsqr(lhi, llo);
+        (thi, tlo) = FieldP384.fsub(thi, tlo, a.xhi, a.xlo);
+        (thi, tlo) = FieldP384.fsub(thi, tlo, a.xhi, a.xlo);
         xhi = thi;
         xlo = tlo;
         
         // y = l * (ax - x) - ay
-        (thi, tlo) = fsub(a.xhi, a.xlo, xhi, xlo);
-        (thi, tlo) = fmul(thi, tlo, lhi, llo);
-        (thi, tlo) = fsub(thi, tlo, a.yhi, a.ylo);
+        (thi, tlo) = FieldP384.fsub(a.xhi, a.xlo, xhi, xlo);
+        (thi, tlo) = FieldP384.fmul(thi, tlo, lhi, llo);
+        (thi, tlo) = FieldP384.fsub(thi, tlo, a.yhi, a.ylo);
         a.xhi = xhi;
         a.xlo = xlo;
         a.yhi = thi;
@@ -156,100 +156,13 @@ contract Curve384 is FieldP384, FieldO384 {
             yhi: gyhi,
             ylo: gylo
         });
-        (shi, slo) = oinv(shi, slo);
-        (uhi, ulo) = omul(0, m, shi, slo);
-        (vhi, vlo) = omul(rhi, rlo, shi, slo);
+        (shi, slo) = FieldO384.oinv(shi, slo);
+        (uhi, ulo) = FieldO384.omul(0, m, shi, slo);
+        (vhi, vlo) = FieldO384.omul(rhi, rlo, shi, slo);
         cmul(g, uhi, ulo);
         cmul(pub, vhi, vlo);
         cadd(g, pub);
         return g.xhi == rhi && g.xlo == rlo;
-    }
-    
-    C384Elm[384] generatorTable;
-    C384Elm[384] pubkeyTable;
-    
-    function precomputeGen()
-        public
-    {
-        C384Elm memory g = C384Elm({
-            xhi: gxhi,
-            xlo: gxlo,
-            yhi: gyhi,
-            ylo: gylo
-        });
-        for(uint256 i = 0; i < 383; i++) {
-            generatorTable[i] = g;
-            cdbl(g);
-        }
-        generatorTable[383] = g;
-    }
-    
-    function precomputePub(
-        uint256 xhi, uint256 xlo,
-        uint256 yhi, uint256 ylo)
-        public
-    {
-        C384Elm memory p = C384Elm({
-            xhi: xhi,
-            xlo: xlo,
-            yhi: yhi,
-            ylo: ylo
-        });
-        for(uint256 i = 0; i < 383; i++) {
-            pubkeyTable[i] = p;
-            cdbl(p);
-        }
-        pubkeyTable[383] = p;
-    }
-    
-    function cmulgen(C384Elm memory r, uint256 rhi, uint256 rlo)
-        internal view
-    {
-        bool running = false;
-        uint256 i = 0;
-        while(rhi != 0 || rlo != 0) {
-            if (rlo & 1 == 1) {
-                if (running) {
-                    cadd(r, generatorTable[i]);
-                } else {
-                    cset(r, generatorTable[i]);
-                    running = true;
-                }
-            }
-            i++;
-            
-            // r >>= 2
-            assembly {
-                rlo := div(rlo, 2)
-                rlo := or(rlo, mul(rhi, 0x8000000000000000000000000000000000000000000000000000000000000000))
-                rhi := div(rhi, 2)
-            }
-        }
-    }
-    
-    function cmulpub(C384Elm memory r, uint256 rhi, uint256 rlo)
-        internal view
-    {
-        bool running = false;
-        uint256 i = 0;
-        while(rhi != 0 || rlo != 0) {
-            if (rlo & 1 == 1) {
-                if (running) {
-                    cadd(r, pubkeyTable[i]);
-                } else {
-                    cset(r, pubkeyTable[i]);
-                    running = true;
-                }
-            }
-            i++;
-            
-            // r >>= 2
-            assembly {
-                rlo := div(rlo, 2)
-                rlo := or(rlo, mul(rhi, 0x8000000000000000000000000000000000000000000000000000000000000000))
-                rhi := div(rhi, 2)
-            }
-        }
     }
     
     function double(
@@ -271,7 +184,7 @@ contract Curve384 is FieldP384, FieldO384 {
 
         uint256 hi;
         uint256 lo;
-        (hi, lo) = fadd(xhi, xlo, yhi, ylo);
+        (hi, lo) = FieldP384.fadd(xhi, xlo, yhi, ylo);
         
         assert(hi == 0xd5580bbe4b82f354c197e5336a0aaf56);
         assert(lo == 0xba52704a88c4d94eb0ca5ad6871ee0708b22d6cd75b50e65e2c52317488e7095);
@@ -287,7 +200,7 @@ contract Curve384 is FieldP384, FieldO384 {
 
         uint256 hi;
         uint256 lo;
-        (hi, lo) = fsub(xhi, xlo, yhi, ylo);
+        (hi, lo) = FieldP384.fsub(xhi, xlo, yhi, ylo);
         
         assert(hi == 0xba9fe7ae7d6a5c9bde109929268f0fdb);
         assert(lo == 0x5a49f5b9f011b375618501beebe40660495e4f543d6b2b70ca60916811d36e7);
@@ -303,7 +216,7 @@ contract Curve384 is FieldP384, FieldO384 {
 
         uint256 hi;
         uint256 lo;
-        (hi, lo) = fmul(xhi, xlo, yhi, ylo);
+        (hi, lo) = FieldP384.fmul(xhi, xlo, yhi, ylo);
         
         assert(hi == 0x5de8b2b22ecdf6790f0c7de8ea01bdd6);
         assert(lo == 0xfb8446353273f6053dd29c5ef32974403861d4b388cefccf2e01f63f53b6ffe0);
@@ -319,7 +232,7 @@ contract Curve384 is FieldP384, FieldO384 {
 
         uint256 hi;
         uint256 lo;
-        (hi, lo) = fmul(xhi, xlo, yhi, ylo);
+        (hi, lo) = FieldP384.fmul(xhi, xlo, yhi, ylo);
         
         assert(hi == 0x858564b53562cbd97f41a5389d7e6673);
         assert(lo == 0x41d0469bbe77677a1ec703fcfcf7fe3f1d0c7b85bf517be09e3b5d480678f3be);
@@ -333,7 +246,7 @@ contract Curve384 is FieldP384, FieldO384 {
 
         uint256 hi;
         uint256 lo;
-        (hi, lo) = finv(xhi, xlo);
+        (hi, lo) = FieldP384.finv(xhi, xlo);
         
         assert(hi == 0xba2909a8e60a55d7a0caf129a18c6c6a);
         assert(lo == 0xa41434c431646bb4a928e76ad732152f35eb59e6df429de7323e5813809f03dc);
