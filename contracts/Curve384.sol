@@ -252,28 +252,6 @@ contract Curve384 is FieldP384, FieldO384 {
         }
     }
     
-    function verify_fast(
-        uint256 m,
-        uint256 rhi, uint256 rlo,
-        uint256 shi, uint256 slo)
-        internal view
-        returns (bool)
-    {
-        uint256 uhi;
-        uint256 ulo;
-        uint256 vhi;
-        uint256 vlo;
-        (shi, slo) = oinv(shi, slo);
-        (uhi, ulo) = omul(0, m, shi, slo);
-        (vhi, vlo) = omul(rhi, rlo, shi, slo);
-        C384Elm memory gen;
-        C384Elm memory pub;
-        cmulgen(gen, uhi, ulo);
-        cmulpub(pub, vhi, vlo);
-        cadd(gen, pub);
-        return gen.xhi == rhi && gen.xlo == rlo;
-    }
-    
     function double(
         C384Elm a)
         internal view
@@ -443,16 +421,5 @@ contract Curve384 is FieldP384, FieldO384 {
         
         bool result = verify(a, m, shi, slo, rhi, rlo);
         assert(result == false);
-    }
-
-    function test_verify_fast()
-    {
-        uint256 m = 0x413140d54372f9baf481d4c54e2d5c7bcf28fd6087000280e07976121dd54af2;
-        uint256 rhi = 0xeeb9131427fd0f0b7195733c60dd8a99;
-        uint256 rlo = 0x822e6250b731e570244afe1053226cc83bcfb2a4280b6f2a81f2a723f62a457e;
-        uint256 shi = 0xee281a7e5d0ea6a14e00c1759f79fddb;
-        uint256 slo = 0xd91f3994cae97f886b1f2615c6a51839f13e1b21becd3d21accaccaceed2725f;
-        bool result = verify_fast(m, rhi, rlo, shi, slo);
-        assert(result == true);
     }
 }
