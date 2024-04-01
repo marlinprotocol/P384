@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity 0.8.24;
 // pragma experimental ABIEncoderV2;
 
 import "./LibMath.sol";
@@ -253,15 +253,16 @@ contract Curve384 is FieldP384, FieldO384 {
     }
     
     function double(
-        C384Elm a)
+        C384Elm memory a)
         internal view
-        returns (C384Elm)
+        returns (C384Elm memory)
     {
         cdbl(a);
         return a;
     }
     
     function test_fadd()
+        public view
     {
         uint256 xhi = 0xc84a6e6ec1e7f30f5c812eeba420f769;
         uint256 xlo = 0xb78d377301367565d6c4579d1bd222dbf64ea76464731482fd32a61ebde26432;
@@ -277,6 +278,7 @@ contract Curve384 is FieldP384, FieldO384 {
     }
     
     function test_fsub()
+        public view
     {
         uint256 xhi = 0x3e501df64c8d7065d58eac499351e2a;
         uint256 xlo = 0xfcdc74fda6bd4980919ca5dcf51075e51e36e9442aba748d8d9931e0f1332bd6;
@@ -292,6 +294,7 @@ contract Curve384 is FieldP384, FieldO384 {
     }
     
     function test_fmul()
+        public view
     {
         uint256 xhi = 0xc84a6e6ec1e7f30f5c812eeba420f769;
         uint256 xlo = 0xb78d377301367565d6c4579d1bd222dbf64ea76464731482fd32a61ebde26432;
@@ -307,6 +310,7 @@ contract Curve384 is FieldP384, FieldO384 {
     }
 
     function test_fmul2()
+        public view
     {
         uint256 xhi = 0x58df4b4c45b7d92e15838cc2ec62e63d;
         uint256 xlo = 0x26a7a65903a36031844d06d753766895e2ebf62f2d593d88f797f25a39a72c98;
@@ -322,6 +326,7 @@ contract Curve384 is FieldP384, FieldO384 {
     }
     
     function test_finv()
+        public view
     {
         uint256 xhi = 0x3e501df64c8d7065d58eac499351e2a;
         uint256 xlo = 0xfcdc74fda6bd4980919ca5dcf51075e51e36e9442aba748d8d9931e0f1332bd6;
@@ -335,6 +340,7 @@ contract Curve384 is FieldP384, FieldO384 {
     }
     
     function test_cadd()
+        public view
     {
         C384Elm memory a = C384Elm({
             xhi:0xc84a6e6ec1e7f30f5c812eeba420f769,
@@ -356,6 +362,7 @@ contract Curve384 is FieldP384, FieldO384 {
     }
 
     function test_cdbl()
+        public view
     {
         C384Elm memory a = C384Elm({
             xhi:0xc84a6e6ec1e7f30f5c812eeba420f769,
@@ -371,6 +378,7 @@ contract Curve384 is FieldP384, FieldO384 {
     }
     
     function test_cmul()
+        public view
     {
         C384Elm memory a = C384Elm({
             xhi:0xc84a6e6ec1e7f30f5c812eeba420f769,
@@ -388,6 +396,7 @@ contract Curve384 is FieldP384, FieldO384 {
     }
     
     function test_verify()
+        public view
     {
         C384Elm memory a = C384Elm({
             xhi:0xc84a6e6ec1e7f30f5c812eeba420f769,
@@ -406,6 +415,7 @@ contract Curve384 is FieldP384, FieldO384 {
     }
 
     function test_verify_neg()
+        public view
     {
         C384Elm memory a = C384Elm({
             xhi:0xc84a6e6ec1e7f30f5c812eeba420f769,

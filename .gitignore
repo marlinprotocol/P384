@@ -63,3 +63,5 @@ typings/
 # hardhat compile
 cache/
 artifacts/
+
+.vscode

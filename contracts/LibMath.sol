@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity 0.8.24;
 
 library LibMath {
     
@@ -33,7 +33,7 @@ library LibMath {
             mstore(add(o, 0x100), 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
             mstore(add(o, 0x120), 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
             
-            let result := staticcall(gas, 0x5, o, 0x140, o, 0x60)
+            let result := staticcall(gas(), 0x5, o, 0x140, o, 0x60)
             
             r2 := mload(add(o, 0x000)) // Result
             r1 := mload(add(o, 0x020)) // Result
@@ -59,7 +59,7 @@ library LibMath {
             mstore(add(o, 0x0C1), mul(mhi, 0x100000000000000000000000000000000)) // Modulus
             mstore(add(o, 0x0D1), mlo)
             
-            let result := staticcall(gas, 0x5, o, 0xF1, o, 0x30)
+            let result := staticcall(gas(), 0x5, o, 0xF1, o, 0x30)
             
             hi := mload(sub(o, 0x010)) // Result
             hi := and(hi, 0xffffffffffffffffffffffffffffffff)
@@ -86,7 +86,7 @@ library LibMath {
             mstore(add(o, 0x091), mul(mhi, 0x100000000000000000000000000000000)) // Modulus
             mstore(add(o, 0x0A1), mlo)
             
-            let result := staticcall(gas, 0x5, o, 0x0C1, o, 0x30)
+            let result := staticcall(gas(), 0x5, o, 0x0C1, o, 0x30)
             
             hi := mload(sub(o, 0x010)) // Result
             hi := and(hi, 0xffffffffffffffffffffffffffffffff)
@@ -115,7 +115,7 @@ library LibMath {
             mstore(add(o, 0x0C0), mul(mhi, 0x100000000000000000000000000000000)) // Modulus
             mstore(add(o, 0x0D0), mlo)
             
-            let result := staticcall(gas, 0x5, o, 0x0F0, o, 0x30)
+            let result := staticcall(gas(), 0x5, o, 0x0F0, o, 0x30)
             
             hi := mload(sub(o, 0x010)) // Result
             hi := and(hi, 0xffffffffffffffffffffffffffffffff)
