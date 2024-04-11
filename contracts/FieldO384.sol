@@ -3,7 +3,7 @@ pragma solidity 0.8.24;
 import "./LibMath.sol";
 
 // Field modulo the NIST-P384 / secp384r1 generator order
-library FieldO384 {
+contract FieldO384 {
       
     // Generator order prime number o
     uint256 constant ohi = 0xffffffffffffffffffffffffffffffff;
