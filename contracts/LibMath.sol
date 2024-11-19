@@ -18,7 +18,7 @@ library LibMath {
     function sqr384(
         uint256 ahi, uint256 alo)
         internal view
-        returns (uint256 r3, uint256 r2, uint256 r1, uint256 r0) // Result
+        returns (uint256 r2, uint256 r1, uint256 r0) // Result
     {
         assembly {
             let o := mload(0x40)
