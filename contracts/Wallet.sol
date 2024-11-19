@@ -2,14 +2,13 @@ pragma solidity ^0.8.24;
 
 import "./Curve384.sol";
 
-contract Wallet {
+contract Wallet is Curve384 {
     uint256 Pxhi;
     uint256 Pxlo;
     uint256 Pyhi;
     uint256 Pylo;
-    constructor(uint256 _Pxhi, uint256 _Pxlo, uint256 _Pyhi, uint256 _Pylo)
-        public
-    {
+
+    constructor(uint256 _Pxhi, uint256 _Pxlo, uint256 _Pyhi, uint256 _Pylo) {
         Pxlo = _Pxlo;
         Pxhi = _Pxhi;
         Pylo = _Pylo;
@@ -23,6 +22,6 @@ contract Wallet {
             yhi: Pyhi,
             ylo: Pylo
         });
-        return Curve384.verify(pub, uint256(hash), rhi, rlo, shi, slo);
+        return verify(pub, 0, uint256(hash), rhi, rlo, shi, slo);
     }
 }
