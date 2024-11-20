@@ -86,7 +86,6 @@ contract FieldP384 {
         (r1, r0) = LibMath.mul512(alo, blo);
         r2 = ahi * bhi;
         
-        uint256 t0;
         uint256 t1;
         uint256 t2;
         (t2, t1) = LibMath.mul512(alo, bhi);
